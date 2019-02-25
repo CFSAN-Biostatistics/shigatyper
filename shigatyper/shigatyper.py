@@ -11,6 +11,7 @@ import datetime
 import glob
 import numpy as np
 import pandas as pd
+import subprocess
 #from IPython.display import display, HTML
 
 # start = datetime.datetime.now()
@@ -131,7 +132,7 @@ def run():
 
     start = datetime.datetime.now()
     # give an error message if the reference sequence database is not there
-    ShigellaRef = "../../references/ShigellaRef5.fasta"
+    ShigellaRef = "ShigellaRef5.fasta"
     if os.path.isfile(ShigellaRef) == False:
         print("Error: reference sequence database does not exist!")
         exit()
@@ -141,7 +142,7 @@ def run():
     mmi_index = os.path.join(rel_dir, "ShigellaRef5.mmi")
     if os.path.isfile(mmi_index) == False:
         print("building Reference sequence index.......")
-        get_ipython().system('minimap2 -d $mmi_index $ShigellaRef')
+        subprocess.check_call('minimap2 -d $mmi_index $ShigellaRef')
     lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
 
 
@@ -152,7 +153,7 @@ def run():
     # map the fastq.gz files to reference sequence database
     outputbam = Sample + "/" + Sample + "_Shigella5.bam"
     maplog = Sample + "/" + Sample + "_Shigella5_minimap2.log"
-    get_ipython().system('(minimap2 -ax sr $mmi_index $read1 $read2 | samtools view -F 0x04 -b | samtools sort -o $outputbam -) 2>$maplog')
+    subprocess.check_call('(minimap2 -ax sr $mmi_index $read1 $read2 | samtools view -F 0x04 -b | samtools sort -o $outputbam -) 2>$maplog')
     lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
 
 
@@ -166,7 +167,7 @@ def run():
     checkpoint = 0
     ipaB = 0
     prediction = ""
-    NR = get_ipython().getoutput('samtools view $outputbam | wc -l')
+    NR = subprocess.check_output('samtools view $outputbam | wc -l')
     if int(NR[0]) == 0:
         checkpoint = 1
         print("Checkpoint 1 failed.")
@@ -183,7 +184,7 @@ def run():
     start = datetime.datetime.now()
     #check what sequences were hits and how many reads were mapped to each of the hits
     if checkpoint == 0:
-        Hits = get_ipython().getoutput('samtools view $outputbam | cut -f3 | uniq -c')
+        Hits = subprocess.check_output('samtools view $outputbam | cut -f3 | uniq -c')
         hits = []; Nreads = []
         for hit in Hits:
             hits.append(hit[8:]); Nreads.append(int(hit[:7]))
@@ -222,7 +223,7 @@ def run():
         # find reference sequence length for calculation of % coverage
         Gene_length = list()
         RefDic = dict()
-        Reflines = get_ipython().getoutput('samtools view -H $outputbam | grep "SN"')
+        Reflines = subprocess.check_output('samtools view -H $outputbam | grep "SN"')
         for Refline in Reflines:
             line = Refline[(Refline.find("SN:")+3):]
             words = line.split("LN:")
@@ -240,13 +241,13 @@ def run():
     if checkpoint == 0:
         print("Analysis in progress........ \n")
         # index the bam file for mpileup
-        get_ipython().system('samtools index $outputbam')
+        subprocess.check_call('samtools index $outputbam')
         # index reference sequence for mpileup if the index is not already there
         #if os.path.isfile("../../references/ShigellaRef5.fasta.fai") == False:
         #    !samtools faidx $ShigellaRef
 
         outputmpileup = Sample + "/" + Sample + "_Shigella5.mpileup"
-        get_ipython().system('samtools mpileup -C50 -q 20 -Q 20 -f $ShigellaRef $outputbam -o $outputmpileup')
+        subprocess.check_call('samtools mpileup -C50 -q 20 -Q 20 -f $ShigellaRef $outputbam -o $outputmpileup')
         # can I pipe it so that I won't have a mpileup file left in the disk?
     else: print("skipped.")
     lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
@@ -258,7 +259,7 @@ def run():
     start = datetime.datetime.now()
     if checkpoint == 0:
         print("........................")
-        covSummary = get_ipython().getoutput("cat $outputmpileup | awk '$4 > 0' | cut -f1 | uniq -c")
+        covSummary = subprocess.check_output("cat $outputmpileup | awk '$4 > 0' | cut -f1 | uniq -c")
         hits = []; bpCovered = []
         for hit in covSummary:
             hits.append(hit[8:]); bpCovered.append(int(hit[:7]))
@@ -277,7 +278,7 @@ def run():
 
     start = datetime.datetime.now()
     if checkpoint == 0:
-        VARS = get_ipython().getoutput('samtools mpileup -C50 -q 20 -Q 20 -f $ShigellaRef -g $outputbam | bcftools     call -m | cat | grep -v "^#" | grep PL | cut -f1 | uniq -c')
+        VARS = subprocess.check_output('samtools mpileup -C50 -q 20 -Q 20 -f $ShigellaRef -g $outputbam | bcftools     call -m | cat | grep -v "^#" | grep PL | cut -f1 | uniq -c')
         VARS = VARS[3:]
         hits = []; Nvar = []
         for hit in VARS:
@@ -551,12 +552,27 @@ def run():
     lapse = datetime.datetime.now() - start
     timetrack.append(lapse.total_seconds())
 
+
+def main(fwd, rev, output, *args, **kwargs):
+    "need to figure out this logic; what would be a better structure"
+    subprocess.check_call('minimap2 -d $mmi_index $ShigellaRef')
+    subprocess.check_call('(minimap2 -ax sr $mmi_index $read1 $read2 | samtools view -F 0x04 -b | samtools sort -o $outputbam -) 2>$maplog')
+    NR = subprocess.check_output('samtools view $outputbam | wc -l')
+    Hits = subprocess.check_output('samtools view $outputbam | cut -f3 | uniq -c')
+    Reflines = subprocess.check_output('samtools view -H $outputbam | grep "SN"')
+    subprocess.check_call('samtools index $outputbam')
+    subprocess.check_call('samtools mpileup -C50 -q 20 -Q 20 -f $ShigellaRef $outputbam -o $outputmpileup')
+    covSummary = subprocess.check_output("cat $outputmpileup | awk '$4 > 0' | cut -f1 | uniq -c")
+    VARS = subprocess.check_output('samtools mpileup -C50 -q 20 -Q 20 -f $ShigellaRef -g $outputbam | bcftools     call -m | cat | grep -v "^#" | grep PL | cut -f1 | uniq -c')
+
+
+
 if __name__ == "__main__":
     import argparse
 
     parse = argparse.ArgumentParser()
     args = parse.parse_args()
-    run(**vars(args))
+    main(**vars(args))
 
 # save output for time
 #if fastp== 0:
