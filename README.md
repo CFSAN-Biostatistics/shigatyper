@@ -18,6 +18,6 @@ ShigaTyper is a quick and easy tool designed to determine Shigella serotype usin
 
 ## Example
 
-    $ shigatyper CFSAN029786_S10_L001_R1_001.fastq.gz CFSAN029786_S10_L001_R2_001.fastq.gz
+    $ shigatyper.py CFSAN029786_S10_L001_R1_001.fastq.gz CFSAN029786_S10_L001_R2_001.fastq.gz
     sample  prediction      ipaB
     CFSAN029786     Shigella dysenteriae serotype 3 +
