@@ -8,6 +8,4 @@ dependencies:
  - bcftools=1.9
  - python=3.7
  - minimap2=2.16
-# - papermill=0.14.2
  - pandas=0.24.2
- - humanize=0.5.1

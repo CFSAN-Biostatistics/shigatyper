@@ -1,4 +1,2 @@
 pandas==0.24
-#numpy=="1.15.4"
 pysam==0.15.1
-#papermill==0.14.2
