@@ -667,7 +667,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
     # timetrack.append(lapse.total_seconds())
 
 
-if __name__ == "__main__":
+def main():
     import argparse
 
     parse = argparse.ArgumentParser()
@@ -704,6 +704,9 @@ if __name__ == "__main__":
     finally:
         pass
         shutil.rmtree(tempdir)
+
+if __name__ == "__main__":
+    main()
 
 # save output for time
 #if fastp== 0:
