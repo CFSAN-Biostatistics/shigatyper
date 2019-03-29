@@ -699,8 +699,10 @@ def main():
         run(tempdir=tempdir, **vars(args))
     except CalledProcessError as e:
         #print(e.cmd, file=sys.stderr)
-        print(e, file=sys.stderr)
-        print(e.stderr, file=sys.stderr)
+        rlog.error(e)
+        if e.stderr:
+            rlog.error(e.stderr)
+        exit(e.returncode)
     finally:
         pass
         shutil.rmtree(tempdir)
