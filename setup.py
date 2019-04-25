@@ -12,10 +12,11 @@ setup(name='ShigaTyper',
 	  maintainer_email='Justin.Payne@fda.hhs.gov',
       url='',
       packages=['shigatyper'],
-	  package_data=dict(shigatyper='resources/*.fasta'),
+	  #package_data=dict(shigatyper='resources/*.fasta'),
+	  data_files = [('resources', ['*fasta',])],
 	  license='USG work product released into the public domain',
 	  python_requires=">=3.7",
-	  install_requires=['pandas>=0.24', 'pysam>=0.15.1'],
+	  install_requires=['pandas>=0.24',],
 	  entry_points=dict(console_scripts=[
 		'shigatyper = shigatyper.shigatyper:main',
 		])

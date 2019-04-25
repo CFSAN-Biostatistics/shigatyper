@@ -712,12 +712,12 @@ def main():
     for dependency in ('minimap2', 'samtools', 'bcftools', ):
         try: 
             check_output([dependency, '--version'])
-        except CalledProcessError as e:
+        except (CalledProcessError, FileNotFoundError) as e:
             missing.append((dependency, e))
 
     if missing:
         for dependency, error in missing:
-            print(f"Dependency {dependency} errored or not found, exit code {error.returncode}", file=sys.stderr)
+            print(f"Dependency {dependency} errored or not found", file=sys.stderr)
         exit(126)
 
     import argparse
