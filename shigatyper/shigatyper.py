@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-version = "1.0.0a"
+version = "1.0.5"
 
 usage = f"""ShigaTyper v. {version}, 2019
 
