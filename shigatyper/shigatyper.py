@@ -668,6 +668,12 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
 
 
 def main():
+
+    ShigellaRef = os.path.abspath(j(dirname(__file__), 'resources', 'ShigellaRef5.fasta'))
+    if not os.path.isfile(ShigellaRef):
+        print(f"Error: reference sequence not found at {ShigellaRef}.", file=sys.stderr)
+        exit(126)
+
     import argparse
 
     parse = argparse.ArgumentParser()
