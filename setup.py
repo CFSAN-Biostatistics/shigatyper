@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='ShigaTyper',
-      version='1.0.0a',
+      version='1.0.3',
       description='Shigella serotype prediction tool',
 	  long_description=open('README.md').read(),
       author='Yun Wu, Henry Lau, Theresa Lee, David Lau, Justin Payne',
@@ -13,7 +13,7 @@ setup(name='ShigaTyper',
       url='',
       packages=['shigatyper'],
 	  #package_data=dict(shigatyper='resources/*.fasta'),
-	  data_files = [('resources', ['resources/*fasta',])],
+	  data_files = [('resources', ['/shigatyper/resources/*fasta',])],
 	  license='USG work product released into the public domain',
 	  python_requires=">=3.7",
 	  install_requires=['pandas>=0.24',],
