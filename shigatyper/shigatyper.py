@@ -1,7 +1,42 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-# ## 1. Load the two paired-end Illumina reads
+version = "1.0.0a"
+
+usage = f"""ShigaTyper v. {version}, 2019
+
+A WGS-based genoserotyping pipeline for Shigella spp.
+
+Yun Wu, Henry K Lau, Teresa Lee, David K Lau, Justin Payne
+
+    The bacteria Shigella spp., consisting of 4 species and >50
+serotypes, cause shigellosis, a foodborne disease of significant
+morbidity, mortality, and economic loss worldwide. Classical Shigella
+identification based on selective media and serology is tedious,
+time-consuming, expensive, and not always accurate. Molecular diagnostic
+assay does not distinguish Shigella at species level or from
+enteroinvasive Escherichia coli (EIEC). We inspected the whole genome
+sequencing (WGS) data from 219 Shigella isolates and observed low
+concordance rate between conventional designation and molecular
+serotyping, 86.8% and 78.9% at species and serotype level, respectively.
+Serotype determinants for 6 additional serotypes were identified.
+Examination of differentiation gene markers commonly perceived as
+characteristic hallmarks in Shigella showed high variability among
+different serotypes. Using this information, we developed ShigaTyper, an
+automated workflow that utilizes limited computational resources to
+accurately and rapidly determine 58 Shigella serotypes using Illumina
+paired end WGS reads. Shigella serotype determinants and species-specific
+diagnostic markers were first identified through read alignment to an
+in-house curated reference sequence database. Relying on sequence hits
+that passed a threshold level of coverage and accuracy, serotype can be
+unambiguously predicted within 1 min for an average sized WGS sample of
+~500 MB. Validation with WGS data from 112 isolates show an accuracy of
+98.2%. This pipeline is the first step towards building a comprehensive
+WGS-based analysis pipeline of Shigella spp. in a field laboratory
+setting, where speed is essential and resources need to be more
+cost-effectively dedicated.
+
+"""
 
 
 
@@ -21,7 +56,7 @@ from subprocess import check_output, CalledProcessError
 from os.path import join as j, dirname
 from functools import partial
 
-version = "1.0.0a"
+
 
 
 #from IPython.display import display, HTML
@@ -673,10 +708,21 @@ def main():
     if not os.path.isfile(ShigellaRef):
         print(f"Error: reference sequence not found at {ShigellaRef}.", file=sys.stderr)
         exit(126)
+    missing = []
+    for dependency in ('minimap2', 'samtools', 'bcftools', ):
+        try: 
+            check_output([dependency, '--version'])
+        except CalledProcessError as e:
+            missing.append((dependency, e))
+
+    if missing:
+        for dependency, error in missing:
+            print(f"Dependency {dependency} errored or not found, exit code {error.returncode}", file=sys.stderr)
+        exit(126)
 
     import argparse
 
-    parse = argparse.ArgumentParser()
+    parse = argparse.ArgumentParser(description=usage, formatter_class=argparse.RawDescriptionHelpFormatter)
     parse.add_argument('read1')
     parse.add_argument('read2')
     parse.add_argument('-n', '--name', dest='sample_name')
