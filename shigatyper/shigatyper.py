@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-version = "1.0.5"
+version = "1.0.6"
 
 usage = f"""ShigaTyper v. {version}, 2019
 
@@ -194,7 +194,7 @@ def readable(tdelta):
     else:
         return f"{tdelta.seconds // 3600} hours, {tdelta.seconds // 60 : 01} seconds"
 
-def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args, **kwargs):
+def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args, **kwargs):
     # ## 3. Map Filtered reads to Reference sequence database (ShigellaRef5)
 
     rlog.critical(f" .v {version}")
@@ -269,7 +269,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
     timetrack.append(lapse.total_seconds())
 
 
-    # ## 3.1. Examine sequence hits identified by bowtie2
+    # ## 3.1. Examine sequence hits identified by Minimap2
 
     # In[ ]:
 
@@ -513,7 +513,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
     else: log.info("Skipped.")
                 
     if checkpoint == 0: log.info("Checkpoint 4 ..... passed")
-    elif checkpoint == 4: log.error("Checkpoint 4 failed!")
+
     lapse = datetime.datetime.now() - start
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
@@ -604,10 +604,12 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
                         else:
                             SfDic = {"Shigella flexneri Yv": ["Xv"], "Shigella flexneri serotype 1a": ["gtrI"], 
                                 "Shigella flexneri serotype 1b": ["gtrI", "Oac1b"], "Shigella flexneri serotype 2a": 
-                                ["gtrII"], "Shigella flexneri serotype 2b": ["gtrII", "gtrX"], "Shigella flexneri serotype 3a":
+                                ["gtrII"], 'Shigella flexneri 2av': ['gtrII', 'Xv'], 
+                                "Shigella flexneri serotype 2b": ["gtrII", "gtrX"], "Shigella flexneri serotype 3a":
                                 ["gtrX","Oac"], "Shigella flexneri serotype 3b": ["Oac"], "Shigella flexneri serotype 4a": 
                                 ["gtrIV"], "Shigella flexneri serotype 4av": ["gtrIV", "Xv"], "Shigella flexneri serotype 4b":
-                                ["gtrIV", "Oac"], "Shigella flexneri serotype 5a": (["gtrV", "Oac"], ['gtrV']),
+                                ["gtrIV", "Oac"], 'Shigella flexneri 4bv': ['gtrIV', 'Oac', 'Xv'],
+                                "Shigella flexneri serotype 5a": (["gtrV", "Oac"], ['gtrV']),
                                     "Shigella flexneri serotype 5b": (["gtrV", "gtrX", "Oac"], ['gtrV', 'gtrX']),
                                     "Shigella flexneri serotype X": ["gtrX"], "Shigella flexneri serotype Xv (4c)":
                                 ["gtrX", "Xv"], "Shigella flexneri serotype 1c (7a)": ['gtrI', 'gtrIC'], 
@@ -642,13 +644,13 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
     if checkpoint == 1:
         log.critical("No read was mapped to the reference sequence database.")
     elif checkpoint == 2:
-        log.critical("{sample_name} is ipaH-.")
+        log.critical(f"{sample_name} is ipaH-.")
     elif checkpoint == 13:
         log.critical("Shigella boydii serotype 13 is no longer considered a Shigella.")
     elif checkpoint == 31:
         log.critical("No ipaH with sufficient coverage and accuracy was detected.")
     elif checkpoint == 32:
-        log.critical("{sample_name} is lacY+ or cadA+ but not one of the exception Shigella serotypes.")
+        log.critical(f"{sample_name} is lacY+ or cadA+ but not one of the exception Shigella serotypes.")
     elif checkpoint == 41:
         log.critical(f"No known wzx was detected. Either there was not enough coverage, or {sample_name} is a novel Shigella strain.")
     elif checkpoint == 42:
@@ -658,6 +660,18 @@ def run(read1, read2, tempdir, sample_name = '', threshold=20, rlog=rlog, *args,
     if ipaB >0:
         log.critical("this strain is ipaB+, suggesting that it retains the virulent invasion plasmid.")
 
+
+
+    # write hits table for individual sample	
+    if checkpoint == 1:
+        pass
+    else:
+        if "ipaH_c" in Maphits.Hit.tolist():
+            output = sample_name + '.csv'
+            List2.to_csv(output)
+        else:
+            output = sample_name + '.csv'
+            Maphits.to_csv(output)
     # if checkpoint == 1:
     #     pass
     # else:
