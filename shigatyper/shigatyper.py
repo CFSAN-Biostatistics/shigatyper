@@ -195,6 +195,7 @@ def readable(tdelta):
         return f"{tdelta.seconds // 3600} hours, {tdelta.seconds // 60 : 01} seconds"
 
 def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args, **kwargs):
+    #print("start run")
     # ## 3. Map Filtered reads to Reference sequence database (ShigellaRef5)
 
     rlog.critical(f" .v {version}")
@@ -555,16 +556,23 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
             if "Sb6_wzx" in Hits:
                 if "wbaM" in Hits:
                     a = sub(f'samtools depth -r wbaM:252-253 {outputbam} | cut -f3')
+                    a = a.split("\n")
+                    # From here the script is failing. Because there is a \n in variable a(also in b,c,d down from here).
+                    # Splitting on \n makes variable a(and b,c,d) an iterable list of items.
+                    # When making this adjustment for variable a,b,c and d, the pipeline returns the correct serotype.
                     a = [int(i) for i in a]; average_a = sum(a)/len(a)
                     if a == 0:
                         prediction = "Shigella boydii serotype 6 or 10"
                     else:
                         b = sub(f"cat {outputmpileup} | awk '$1==\"wbaM\" && $2 >251 && $2 <254' | cut -f4")
+                        b = b.split("\n")
                         b = [int(i) for i in b]; average_b = sum(b)/len(b)
                         junction_ratio = average_b/average_a
                         c = sub(f'samtools depth -r wbaM {outputbam} | cut -f3')
+                        c = c.split("\n")
                         c = [int(i) for i in c]; average_c = sum(c)/len(c)
                         d = sub(f'cat {outputmpileup} | awk \'$1=="wbaM"\' | cut -f4')
+                        d = d.split("\n")
                         d = [int(i) for i in d]; average_d = sum(d)/len(d)
                         overall_ratio = average_d/average_c        
                         if junction_ratio/overall_ratio > 0.5:
