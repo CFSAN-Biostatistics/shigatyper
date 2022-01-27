@@ -543,7 +543,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
                 if "Sd1_rfp" in Hits: 
                     prediction = "Shigella dysenteriae serotype 1"
                 else: 
-                    prediction = "Shigalla dysenteriae serotype 1, rfp- (phenotypically negative)"
+                    prediction = "Shigella dysenteriae serotype 1, rfp- (phenotypically negative)"
             elif "Sd8_wzx" in Hits:
                 prediction = "Shigella dysenteriae serotype 8"
             elif "Sb11_wzx" in Hits:
