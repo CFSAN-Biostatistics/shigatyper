@@ -111,7 +111,7 @@ Here's an example of how it will look:
 If you make use of this tool, please cite the following:
 
 * **[ShigaTyper](https://github.com/CFSAN-Biostatistics/shigatyper)**  
-This tool, for serotyping Shigella.
+This tool, for serotyping Shigella.  
 Wu Y, Lau HK, Lee T, Lau DK, Payne J [In Silico Serotyping Based on Whole-Genome Sequencing Improves the Accuracy of Shigella Identification.](https://doi.org/10.1128/AEM.00165-19) *Applied and Environmental Microbiology*, 85(7). (2019)  
 
 * **[Minimap2](https://github.com/lh3/minimap2)**  
