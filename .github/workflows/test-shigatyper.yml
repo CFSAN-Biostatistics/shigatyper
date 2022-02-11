@@ -40,23 +40,18 @@ jobs:
         run: |
           fastq-dl SRX5006488 ENA --is_experiment --group_by_experiment
           python3 shigatyper/shigatyper.py --R1 SRX5006488_R1.fastq.gz --R2 SRX5006488_R2.fastq.gz
-          cat SRX5006488.tsv
-          cat SRX5006488-hits.tsv
 
       - name: Test ShigaTyper with single-end reads
         run: |
           cat SRX5006488_R1.fastq.gz SRX5006488_R2.fastq.gz > SRX5006488SE.fastq.gz
           python3 shigatyper/shigatyper.py --SE SRX5006488SE.fastq.gz
-          cat SRX5006488SE.tsv
 
       - name: Test ShigaTyper with ONT reads
         run: |
           fastq-dl SRX7050861 ENA --is_experiment --group_by_experiment
           python3 shigatyper/shigatyper.py --SE SRX7050861.fastq.gz --ont
-          cat SRX7050861.tsv
 
       - name: Test ShigaTyper with non-Shigella reads
         run: |
           wget https://github.com/bactopia/bactopia-tests/raw/main/data/species/portiera/nanopore/ERR3772599.fastq.gz
           python3 shigatyper/shigatyper.py --SE ERR3772599.fastq.gz --ont
-          cat ERR3772599.tsv
