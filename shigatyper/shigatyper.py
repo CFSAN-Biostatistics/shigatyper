@@ -3,8 +3,6 @@
 """
 usage: shigatyper.py [-h] [--R1 FASTA] [--R2 FASTA] [--SE FASTA] [--ont] [-n SAMPLE_NAME] [--verbose] [--version]
 
-ShigaTyper v. 2.0.0, 2022
-
 A WGS-based genoserotyping pipeline for Shigella spp.
 
 options:
@@ -89,7 +87,7 @@ def readable(tdelta):
 
 def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *args, **kwargs):
     # ## 3. Map Filtered reads to Reference sequence database (ShigellaRef5)
-    rlog.critical(f" .v {version}")
+    rlog.critical(f"ShigaTyper v{version}")
 
     rlog = rlog.getChild('run')
     
@@ -482,43 +480,52 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *arg
 
     log.critical(f"** {sample_name} is predicted to be {prediction}.**")
 
+    note = []
     if checkpoint == 1:
-        log.critical("No read was mapped to the reference sequence database.")
+        note.append("No read was mapped to the reference sequence database.")
     elif checkpoint == 2:
-        log.critical(f"{sample_name} is ipaH-.")
+        note.append(f"{sample_name} is ipaH-.")
     elif checkpoint == 13:
-        log.critical("Shigella boydii serotype 13 is no longer considered a Shigella.")
+        note.append("Shigella boydii serotype 13 is no longer considered a Shigella.")
     elif checkpoint == 31:
-        log.critical("No ipaH with sufficient coverage and accuracy was detected.")
+        note.append("No ipaH with sufficient coverage and accuracy was detected.")
     elif checkpoint == 32:
-        log.critical(f"{sample_name} is lacY+ or cadA+ but not one of the exception Shigella serotypes.")
+        note.append(f"{sample_name} is lacY+ or cadA+ but not one of the exception Shigella serotypes.")
     elif checkpoint == 41:
-        log.critical(f"No known wzx was detected. Either there was not enough coverage, or {sample_name} is a novel Shigella strain.")
+        note.append(f"No known wzx was detected. Either there was not enough coverage, or {sample_name} is a novel Shigella strain.")
     elif checkpoint == 42:
-        log.critical("Multiple wzx genes were detected. There's a potential contamination in the sample.")
+        note.append("Multiple wzx genes were detected. There's a potential contamination in the sample.")
 
     if ipaB >0:
-        log.critical("this strain is ipaB+, suggesting that it retains the virulent invasion plasmid.")
+        note.append("this strain is ipaB+, suggesting that it retains the virulent invasion plasmid.")
 
-    # write hits table for individual sample	
+    note = ";".join(note)
+    log.critical(note)
+    # write hits table for individual sample
+    
     if checkpoint == 1:
         pass
     else:
+        output = f"{sample_name}-hits.tsv"
+        log.critical(f"Writing hits to {output}")
         if "ipaH_c" in Maphits.Hit.tolist():
-            output = sample_name + '.csv'
-            List2.to_csv(output)
+            List2.to_csv(output, sep="\t")
+            List2.to_csv(sys.stdout, sep="\t")
         else:
-            output = sample_name + '.csv'
-            Maphits.to_csv(output)
+            Maphits.to_csv(output, sep="\t")
+            Maphits.to_csv(sys.stdout, sep="\t")
+
+    serotype_output = f"{sample_name}.tsv"
+    log.critical(f"Writing final serotype prediction to {serotype_output}")
+    with open(f"{sample_name}.tsv", "wt") as fh_out:
+        ipab = ('-','+')[bool(ipaB)]
+        results = f"sample\tprediction\tipaB\tnotes\n{sample_name}\t{prediction}\t{ipab}\t{note}"
+        print(results)
+        fh_out.write(f"{results}\n")
 
     lapse = datetime.datetime.now() - start
-    log.info(f"Complete in {readable(lapse)}.")
+    log.critical(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
-
-    wtr = csv.writer(sys.stdout, delimiter='\t', dialect='excel')
-    wtr.writerow(('sample', 'prediction', 'ipaB'))
-    wtr.writerow((sample_name, prediction, ('-','+')[bool(ipaB)]))
-
 
 if __name__ == "__main__":
     ShigellaRef = os.path.abspath(j(dirname(__file__), 'resources', 'ShigellaRef5.fasta'))
