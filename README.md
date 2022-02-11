@@ -111,8 +111,12 @@ Here's an example of how it will look:
 If you make use of this tool, please cite the following:
 
 * **[ShigaTyper](https://github.com/CFSAN-Biostatistics/shigatyper)**  
-This tool, for serotyping Shigella.  
+This tool, for serotyping Shigella.
 Wu Y, Lau HK, Lee T, Lau DK, Payne J [In Silico Serotyping Based on Whole-Genome Sequencing Improves the Accuracy of Shigella Identification.](https://doi.org/10.1128/AEM.00165-19) *Applied and Environmental Microbiology*, 85(7). (2019)  
+
+* **[BCFtools](https://github.com/samtools/bcftools)**  
+Utilities for variant calling and manipulating VCFs and BCFs.  
+Danecek P, Bonfield JK, Liddle J, Marshall J, Ohan V, Pollard MO, Whitwham A, Keane T, McCarthy SA, Davies RM, Li H [Twelve years of SAMtools and BCFtools](https://doi.org/10.1093/gigascience/giab008) *GigaScience* Volume 10, Issue 2 (2021)  
 
 * **[Minimap2](https://github.com/lh3/minimap2)**  
 A versatile pairwise aligner for genomic and spliced nucleotide sequences  
