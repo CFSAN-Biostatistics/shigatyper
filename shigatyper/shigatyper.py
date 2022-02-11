@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-version = "1.0.6"
+version = "2.0.0"
 
-usage = f"""ShigaTyper v. {version}, 2019
+usage = f"""ShigaTyper v. {version}, 2022
 
 A WGS-based genoserotyping pipeline for Shigella spp.
 
@@ -37,16 +37,11 @@ setting, where speed is essential and resources need to be more
 cost-effectively dedicated.
 
 """
-
-
-
 import os
 import csv
 import datetime
-import glob
 import logging
 import itertools
-#import numpy as np
 import pandas as pd
 import shutil
 import sys
@@ -54,125 +49,8 @@ import tempfile
 
 from subprocess import check_output, CalledProcessError
 from os.path import join as j, dirname
-from functools import partial
-
-
-
-
-#from IPython.display import display, HTML
-
-# start = datetime.datetime.now()
-# print("read1: ", read1)
-# print("read2: ", read2)
-# print("name of sample: ", Sample)
-# #create a directory for all files generated from analyzing this sample
-# if not os.path.isdir(Sample):
-#     os.makedirs(Sample)
-# timetrack = []
-# lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
-
-
-# # ## 2. QC Characterization of the two reads files by fastp
-
-# # ### 2.1. summary of quality attributes of the two fastq files (read1 and read2), no filtering:
-
-# # In[ ]:
-
-
-# start = datetime.datetime.now()
-# today = datetime.datetime.now().strftime("%Y%m%d")
-# if fastp == 0:
-#     Report_html = Sample + "/" + Sample + "_fastp_" + today + ".html"
-#     Report_json = Sample + "/" + Sample + "_fastp_" + today + ".json"
-#     fastplog = Sample + "/" + Sample + "fastp.log"
-#     get_ipython().system('fastp -i $read1 -I $read2 -Q -h $Report_html -j $Report_json >> $fastplog')
-# else: print("Quality insepction skipped.")
-# lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
-
-
-# # In[ ]:
-
-
-# start = datetime.datetime.now()
-# if fastp == 0: 
-#     import json
-#     data = json.load(open(Report_json))
-
-#     attr = ["Number of reads", "Number of bases", "Q20 bases", "Q30 bases", "Average read length"]
-#     read1sum = [data["read1_before_filtering"].get("total_reads"), data["read1_before_filtering"].get("total_bases"),
-#                 data["read1_before_filtering"].get("q20_bases"), data["read1_before_filtering"].get("q30_bases")]
-#     read1q20 = str(read1sum[2]) + " (" + str(round(100*read1sum[2]/read1sum[1],2)) +"%)"
-#     read1q30 = str(read1sum[3]) + " (" + str(round(100*read1sum[3]/read1sum[1],2)) +"%)"
-#     col1 = read1sum[0:2] + [read1q20, read1q30] + [round(read1sum[1]/read1sum[0],2)]
-#     read2sum = [data["read2_before_filtering"].get("total_reads"), data["read2_before_filtering"].get("total_bases"),
-#                 data["read2_before_filtering"].get("q20_bases"), data["read2_before_filtering"].get("q30_bases")]
-#     read2q20 = str(read2sum[2]) + " (" + str(round(100*read2sum[2]/read2sum[1],2)) +"%)"
-#     read2q30 = str(read2sum[3]) + " (" + str(round(100*read2sum[3]/read2sum[1],2)) +"%)"
-#     col2 = [read2sum[0], read2sum[1], read2q20, read2q30] + [round(read2sum[1]/read2sum[0],2)]
-#     totalsum = [data["summary"]["before_filtering"].get("total_reads"), data["summary"]["before_filtering"].get("total_bases"),
-#                 data["summary"]["before_filtering"].get("q20_bases"), data["summary"]["before_filtering"].get("q30_bases")]
-#     totalq20 = str(totalsum[2]) + " (" + str(round(100*totalsum[2]/totalsum[1],2)) +"%)"
-#     totalq30 = str(totalsum[3]) + " (" + str(round(100*totalsum[3]/totalsum[1],2)) +"%)"
-#     col3 = totalsum[0:2] + [totalq20, totalq30] + [round(totalsum[1]/totalsum[0],2)]
-
-#     df = pd.DataFrame({' ': attr,'read1': col1,'read2':col2, 'Total': col3})
-#     df = df[[' ', 'read1', 'read2', 'Total']]
-    
-#     display(HTML(df.to_html(index=False)))
-# lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
-
-
-# # ### 2.2. Visualization of base quality by type and position
-
-# # In[ ]:
-
-
-# start = datetime.datetime.now()
-# get_ipython().run_line_magic('matplotlib', 'inline')
-# if fastp == 0:
-#     read1_after = data["read1_before_filtering"]["quality_curves"]
-#     read1A = read1_after["A"]; read1G = read1_after["G"]
-#     read1T = read1_after["T"]; read1C = read1_after["C"]
-
-#     read2_after = data["read2_before_filtering"]["quality_curves"]
-#     read2A = read2_after["A"]; read2G = read2_after["G"]
-#     read2T = read2_after["T"]; read2C = read2_after["C"]
-
-#     import matplotlib.pyplot as plt
-#     fig, (plt1, plt2) = plt.subplots(nrows =1, ncols =2, figsize = (6*2, 5*1))
-
-#     plt1.plot(range(len(read1A)), read1A, color = "green")
-#     plt1.plot(range(len(read1G)), read1G, color = "black")
-#     plt1.plot(range(len(read1T)), read1T, color = "red")
-#     plt1.plot(range(len(read1C)), read1C, color = "blue")
-#     plt1.set_ylim((15, 43)); plt1.set_title("Read1: Base Quality")
-#     plt1.legend(("read1_A", "read1_G", "read1_T", "read1_C"), loc = "lower left")
-#     plt1.set_xlabel("Position"); plt1.set_ylabel("Average Quality Score")
-
-#     plt2.plot(range(len(read2A)), read2A, color = "green")
-#     plt2.plot(range(len(read2G)), read2G, color = "black")
-#     plt2.plot(range(len(read2T)), read2T, color = "red")
-#     plt2.plot(range(len(read2C)), read2C, color = "blue")
-#     plt2.set_ylim((15, 43)); plt2.set_title("Read2: Base Quality")
-#     plt2.legend(("read2_A", "read2_G", "read2_T", "read2_C"), loc = "lower left")
-#     plt2.set_xlabel("Position")
-# else: print("Not plotted.")
-# lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
-
-
-# # ### 2.3. Average depth of coverage
-
-# # In[ ]:
-
-
-# start = datetime.datetime.now()
-# if fastp == 0:
-#     print("Depth of coverage (Assuming a genome size of ~5 Mbp): ", round(totalsum[1]/5e6, 1), " fold")
-# else: print("Not calculated.")
-# lapse = datetime.datetime.now() - start; timetrack.append(lapse.total_seconds())
 
 rlog = logging.getLogger('ShigaTyper') #root log
-
 
 def pairwise(i, n=2):
     args = [iter(i)] * n
@@ -194,16 +72,13 @@ def readable(tdelta):
     else:
         return f"{tdelta.seconds // 3600} hours, {tdelta.seconds // 60 : 01} seconds"
 
-def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args, **kwargs):
-    #print("start run")
+def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *args, **kwargs):
     # ## 3. Map Filtered reads to Reference sequence database (ShigellaRef5)
-
     rlog.critical(f" .v {version}")
 
     rlog = rlog.getChild('run')
     
     timetrack = []
-    #sub = partial(check_output, shell=True)
     def sub(cmd, log=rlog):
         log = log.getChild(cmd.split()[0]) #log with name of subprocess command
         result = str(check_output(cmd, shell=True, encoding='UTF-8')).strip()
@@ -212,12 +87,12 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
             log.debug("{}".format(row.replace(' ', '\t')))
         return result
 
-    read1 = os.path.abspath(read1)
-    read2 = os.path.abspath(read2)
+    read1 = os.path.abspath(reads[0])
+    read2 = None
 
-    # In[ ]:
+    if len(reads) == 2:
+        read2 = os.path.abspath(reads[1])
 
-    
     log = rlog.getChild('index')
     start = datetime.datetime.now()
     # give an error message if the reference sequence database is not there
@@ -226,8 +101,6 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
         log.error(f"Error: reference sequence not found at {ShigellaRef}")
         exit()
     # indexing reference sequence database when necessary
-    #dir_path = os.path.dirname(os.path.realpath(ShigellaRef)) # absolute path of reference sequence directory
-    #rel_dir = os.path.relpath(dir_path, os.getcwd()) # relative path of reference sequence directory
     mmi_index = j(tempdir, "ShigellaRef5.mmi")
     if not os.path.isfile(mmi_index):
         log.warning(f"building Reference sequence index in {mmi_index}")
@@ -236,24 +109,28 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-    # In[ ]:
-
     log = rlog.getChild('map')
     start = datetime.datetime.now()
     # map the fastq.gz files to reference sequence database
     outputbam = j(tempdir, "_Shigella5.bam")
-    #maplog = j(tempdir, "_Shigella5_minimap2.log")
-    sub(f'minimap2 -ax sr {mmi_index} {read1} {read2} | samtools view -F 0x04 -b | samtools sort -o {outputbam}', log)
+
+    if read2:
+        # paired-end reads
+        sub(f'minimap2 -ax sr {mmi_index} {read1} {read2} | samtools view -F 0x04 -b | samtools sort -o {outputbam}', log)
+    else:
+        # single-end reads
+        if ont:
+            # ont reads
+            sub(f'minimap2 -ax map-ont {mmi_index} {read1} | samtools view -F 0x04 -b | samtools sort -o {outputbam}', log)
+        else:
+            sub(f'minimap2 -ax sr {mmi_index} {read1} | samtools view -F 0x04 -b | samtools sort -o {outputbam}', log)
+
     lapse = datetime.datetime.now() - start
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ### Checkpoint 1 
     # If there is no read mapped to the reference sequence database, discontinue the analysis.
-
-    # In[ ]:
-
     log = rlog.getChild('check1')
     start = datetime.datetime.now()
     checkpoint = 0
@@ -269,11 +146,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ## 3.1. Examine sequence hits identified by Minimap2
-
-    # In[ ]:
-
     log = rlog.getChild('hits')
     start = datetime.datetime.now()
     #check what sequences were hits and how many reads were mapped to each of the hits
@@ -281,8 +154,6 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
         Hits = sub(f'samtools view {outputbam} | cut -f3 | uniq -c', log)
         hits = []
         Nreads = []
-        # for hit in Hits:
-        #     hits.append(hit[8:]); Nreads.append(int(hit[:7]))
         # 527 ipaB
         # 299 Sd3_wzx
         # 150 Sd3_wzy
@@ -294,12 +165,8 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ### Checkpoint 2
     # If the strain is not Shigella or EIEC, discontinue the analysis.
-
-    # In[ ]:
-
     log = rlog.getChild('check2')
     start = datetime.datetime.now()
     if checkpoint == 0:
@@ -316,23 +183,14 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ## 3.2. Determine breadth of coverage and accuracy of the mapped hits
-
-    # In[ ]:
-
     log = rlog.getChild('accuracy')
     start = datetime.datetime.now()
     if checkpoint == 0:
-        #print("........................")
         # find reference sequence length for calculation of % coverage
         Gene_length = list()
         RefDic = dict()
         Reflines = sub(f'samtools view -H {outputbam} | grep "SN"', log)
-        # for Refline in Reflines:
-        #     line = Refline[(Refline.find("SN:")+3):]
-        #     words = line.split("LN:")
-        #     RefDic[words[0].strip()] = int(words[1])
         # @SQ     SN:Sb12_wzx     LN:1335
         # @SQ     SN:Sb12_wzy     LN:1140
         # @SQ     SN:Sb13_wzx     LN:1320
@@ -348,38 +206,28 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     timetrack.append(lapse.total_seconds())
 
 
-    # In[ ]:
-
     log = rlog.getChild('pileup')
     start = datetime.datetime.now()
     if checkpoint == 0:
-        #log.info("Analysis in progress........ \n")
         # index the bam file for mpileup
         sub(f'samtools index {outputbam}', log)
         # index reference sequence for mpileup if the index is not already there
-        #if os.path.isfile("../../references/ShigellaRef5.fasta.fai") == False:
-        #    !samtools faidx $ShigellaRef
-
-        #outputmpileup = Sample + "/" + Sample + "_Shigella5.mpileup"
         outputmpileup = j(tempdir, "Shigella5.mpileup")
-        sub(f'samtools mpileup -C50 -q 20 -Q 20 -f {ShigellaRef} {outputbam} -o {outputmpileup}', log)
+        if ont:
+            sub(f'samtools mpileup -C10 -B -f {ShigellaRef} {outputbam} -o {outputmpileup}', log)
+        else:
+            sub(f'samtools mpileup -C50 -q 20 -Q 20 -f {ShigellaRef} {outputbam} -o {outputmpileup}', log)
         # can I pipe it so that I won't have a mpileup file left in the disk?
         lapse = datetime.datetime.now() - start
         log.info(f"Complete in {readable(lapse)}.")
         timetrack.append(lapse.total_seconds())
     else: log.info("skipped.")
 
-
-
-    # In[ ]:
-
     log = rlog.getChild('hits')
     start = datetime.datetime.now()
     if checkpoint == 0:
         covSummary = sub(f"cat {outputmpileup} | awk '$4 > 0' | cut -f1 | uniq -c", log)
         hits = []; bpCovered = []
-        # for hit in covSummary:
-        #     hits.append(hit[8:]); bpCovered.append(int(hit[:7]))
         # 1654 ipaB
         # 1495 Sd3_wzx
         for cover, hit in pairwise(covSummary.split()):
@@ -396,18 +244,15 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
-    # In[ ]:
-
     log = rlog.getChild('variants')
     start = datetime.datetime.now()
     if checkpoint == 0:
-        variants = sub(f'samtools mpileup -C50 -q 20 -Q 20 -f {ShigellaRef} -g {outputbam} | bcftools     call -m | cat | grep -v "^#" | grep PL | cut -f1 | uniq -c', log)
-        #VARS = VARS[3:]
+        variants = None
+        if ont:
+            variants = sub(f'samtools mpileup -C10 -B -f {ShigellaRef} -g {outputbam} | bcftools call -m | cat | grep -v "^#" | grep PL | cut -f1 | uniq -c', log)
+        else:
+            variants = sub(f'samtools mpileup -C50 -q 20 -Q 20 -f {ShigellaRef} -g {outputbam} | bcftools call -m | cat | grep -v "^#" | grep PL | cut -f1 | uniq -c', log)
         hits = []; Nvar = []
-        # for hit in VARS:
-        #     hits.append(hit[8:]); Nvar.append(int(hit[:7]))
-        #     Variants = pd.DataFrame({'Hit': hits, 'Number of variants': Nvar})
         # 7 ipaH_c
         # 17 ipaB
         for nvar, hit in pairwise(variants.split()):
@@ -418,9 +263,6 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     lapse = datetime.datetime.now() - start
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
-
-
-    # In[ ]:
 
     log = rlog.getChild('re-axis')
     start = datetime.datetime.now()
@@ -435,9 +277,6 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
-    # In[ ]:
-
     log = rlog.getChild('filter')
     start = datetime.datetime.now()
     if checkpoint == 0:
@@ -448,12 +287,8 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ### Checkpoint 3 
     # If the coverage for the sample is too low, or the strain is lacY+ (potentially EIEC), discontinue the analysis.
-
-    # In[ ]:
-
     log = rlog.getChild('check3')
     start = datetime.datetime.now()
     if checkpoint == 0:
@@ -487,19 +322,14 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ### Checkpoint 4 
     # If there are no hits at all left, or are multiple hits of O-antigen serotype determinant, discontinue the analysis.
-
-    # In[ ]:
-
     log = rlog.getChild('check4')
     start = datetime.datetime.now()
     if checkpoint == 0:
         if len(Hits) == 0:
             checkpoint = 41
             prediction = "No prediction (no wzx)"
-            
         else:
             def wzxindex(Hits):
                 ind = []
@@ -508,7 +338,6 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
                 return ind
 
             if len(wzxindex(Hits)) > 1:
-                # np.delete(Hits, wzxindex(Hits)).tolist() #import numpy as np # I forgot why I have this line
                 checkpoint = 42
                 prediction = "No prediction (multiple wzx)"
     else: log.info("Skipped.")
@@ -519,11 +348,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-
     # ## 4. Shigella serotype prediction
-
-    # In[ ]:
-
     log = rlog.getChild('predict')
     start = datetime.datetime.now()
     if checkpoint == 0:
@@ -634,20 +459,14 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
         timetrack.append(lapse.total_seconds())
     else: log.info("Skipped.")
 
-
-
-    # In[ ]:
     if not sample_name:
         sample_name = os.path.basename(read1).split('_')[0].split('.')[0]
 
     log = rlog.getChild('report')
     start = datetime.datetime.now()
-    # import papermill as pm
-    # pm.record("prediction", prediction)
 
-    #from IPython.display import Markdown, display
     log.critical(f"** {sample_name} is predicted to be {prediction}.**")
-    #display(Markdown(finaloutput))
+
     if checkpoint == 1:
         log.critical("No read was mapped to the reference sequence database.")
     elif checkpoint == 2:
@@ -663,11 +482,8 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     elif checkpoint == 42:
         log.critical("Multiple wzx genes were detected. There's a potential contamination in the sample.")
 
-
     if ipaB >0:
         log.critical("this strain is ipaB+, suggesting that it retains the virulent invasion plasmid.")
-
-
 
     # write hits table for individual sample	
     if checkpoint == 1:
@@ -679,28 +495,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
         else:
             output = sample_name + '.csv'
             Maphits.to_csv(output)
-    # if checkpoint == 1:
-    #     pass
-    # else:
-    #     log.critical("Please consult the table below for further information:")
-    #     from IPython.display import display, HTML
-    #     if "ipaH_c" in Maphits.Hit.tolist():
-    #         rowindex = []
-    #         for i in range(List2.shape[0]):
-    #             if List2.iloc[i]['% covered'] > threshold:
-    #                 rowindex.append(i)
-    #         def color(x):
-    #             df = x.copy()
-    #             df.loc[:,:] = ""
-    #             df.loc[rowindex, ] = 'color: blue'
-    #             return df
-    #         List2_blue = List2.style.apply(color, axis = None)
-    #         display(HTML(List2_blue.render(index=False)))
-    #         log.critical(f"Note: colored in blue are gene hits that passed threshold length coverage. ({threshold}% )")
-    #     else: display(HTML(Maphits.to_html(index=False)))
-            
-    #now = datetime.datetime.now().strftime("%Y-%m-%d %H-%M")
-    #log.info("\nDate and time of analysis: ", now)
+
     lapse = datetime.datetime.now() - start
     log.info(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
@@ -710,21 +505,7 @@ def run(read1, read2, tempdir, sample_name = '', threshold=50, rlog=rlog, *args,
     wtr.writerow((sample_name, prediction, ('-','+')[bool(ipaB)]))
 
 
-    # In[ ]:
-
-
-    # # removing files generated from fastp, minimap2, and samtools:
-    # start = datetime.datetime.now()
-    # filedir = Sample + "/*.*"
-    # files = glob.glob(filedir)
-    # for file in files: os.remove(file)
-    # os.rmdir(Sample)
-    # lapse = datetime.datetime.now() - start
-    # timetrack.append(lapse.total_seconds())
-
-
-def main():
-
+if __name__ == "__main__":
     ShigellaRef = os.path.abspath(j(dirname(__file__), 'resources', 'ShigellaRef5.fasta'))
     if not os.path.isfile(ShigellaRef):
         print(f"Error: reference sequence not found at {ShigellaRef}.", file=sys.stderr)
@@ -744,17 +525,44 @@ def main():
     import argparse
 
     parse = argparse.ArgumentParser(description=usage, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parse.add_argument('read1')
-    parse.add_argument('read2')
+    parse.add_argument('--R1', metavar="FASTA", type=str,
+                       help="Input FASTQ is R1 of paired-end reads")
+    parse.add_argument('--R2', metavar="FASTA", type=str,
+                       help="Input FASTQ is R2 of paired-end reads")
+    parse.add_argument('--SE', metavar="FASTA", type=str,
+                       help="Input FASTQ is contains single-end reads")
+    parse.add_argument('--ont', action="store_true",
+                        help="The input FASTQ file contains ONT reads")
     parse.add_argument('-n', '--name', dest='sample_name')
     parse.add_argument('--verbose', '-v', action='count', dest='log_v', default=0)
-    parse.add_argument('--version', action='version', version=f"ShigaTyper v. {version}")
+    parse.add_argument('--version', action='version', version=f"ShigaTyper {version}")
 
-    
-
+    if len(sys.argv) == 1:
+        parse.print_help()
+        sys.exit(0)
 
     args = parse.parse_args()
 
+    # Check inputs exist
+    is_paired = False
+    if args.R1 and args.R2 and args.SE:
+        logging.error(f"Can only provide paired-end reads (--R1, --R2) or single-end reads (--SE), not both. Please fix and try again")
+        sys.exit(1)
+    elif args.R1 and args.R2:
+        if not os.path.exists(args.R1):
+            logging.error(f"Input R1 FASTQ ({args.R1}) does not exist, please verify and try again")
+            sys.exit(1)
+        if not os.path.exists(args.R2):
+            logging.error(f"Input R2 FASTQ ({args.R2}) does not exist, please verify and try again")
+            sys.exit(1)
+        is_paired = True
+    elif args.SE:
+        if not os.path.exists(args.SE):
+            logging.error(f"Input single-end FASTQ ({args.SE}) does not exist, please verify and try again")
+            sys.exit(1)
+    elif not args.R1 and not args.R2 and not args.SE:
+        logging.error(f"A FASTQ file(s) must be provided, please correct and try again")
+        sys.exit(1)
 
     for level, _ in zip((logging.ERROR, logging.INFO, logging.DEBUG), range(args.log_v + 1)):
         pass
@@ -762,16 +570,17 @@ def main():
     logging.basicConfig(
         level = level,
         stream=sys.stderr,
-        #format="%(asctime)s %(levelname)s:%(name)s:\t%(message)s"
         format="[%(levelname)s::%(name)s] %(message)s"
     )
 
-
     try:
         tempdir = tempfile.mkdtemp()
-        run(tempdir=tempdir, **vars(args))
+        reads = []
+        if is_paired:
+            run([args.R1, args.R2], tempdir=tempdir, ont=False)
+        else:
+            run([args.SE], tempdir=tempdir, ont=args.ont)
     except CalledProcessError as e:
-        #print(e.cmd, file=sys.stderr)
         rlog.error(e)
         if e.stderr:
             rlog.error(e.stderr)
@@ -779,17 +588,3 @@ def main():
     finally:
         pass
         shutil.rmtree(tempdir)
-
-if __name__ == "__main__":
-    main()
-
-# save output for time
-#if fastp== 0:
-#    import csv
-#    timeoutput = Sample + "_" + now[:now.find(" ")] + "_time.csv"
-#    with open(timeoutput, 'w') as f:
-#        writer = csv.writer(f)
-#        writer.writerow([Sample] + timetrack)
-
-
-
