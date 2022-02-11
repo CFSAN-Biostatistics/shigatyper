@@ -26,7 +26,7 @@ jobs:
           auto-activate-base: false
 
       - name: Setup ShigaTyper Environment
-        run: conda install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 samtools
+        run: conda install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
 
       - name: Environment Information
         run: uname -a && env
