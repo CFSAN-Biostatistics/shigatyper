@@ -1,8 +1,23 @@
 #!/usr/bin/env python3
 # coding: utf-8
+"""
+usage: shigatyper.py [-h] [--R1 FASTA] [--R2 FASTA] [--SE FASTA] [--ont] [-n SAMPLE_NAME] [--verbose] [--version]
 
+ShigaTyper v. 2.0.0, 2022
+
+A WGS-based genoserotyping pipeline for Shigella spp.
+
+options:
+  -h, --help            show this help message and exit
+  --R1 FASTA            Input FASTQ is R1 of paired-end reads
+  --R2 FASTA            Input FASTQ is R2 of paired-end reads
+  --SE FASTA            Input FASTQ is contains single-end reads
+  --ont                 The input FASTQ file contains ONT reads
+  -n SAMPLE_NAME, --name SAMPLE_NAME
+  --verbose, -v
+  --version             show program's version number and exit
+"""
 version = "2.0.0"
-
 usage = f"""ShigaTyper v. {version}, 2022
 
 A WGS-based genoserotyping pipeline for Shigella spp.
