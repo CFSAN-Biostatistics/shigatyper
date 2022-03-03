@@ -1,0 +1,57 @@
+name: Test ShigaTyper
+
+on:
+  push:
+    branches: [ master, main, dev ]
+  pull_request:
+    branches: [ master, main, dev ]
+    
+jobs:
+  shigatyper:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Setup miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: shigatyper
+          auto-activate-base: false
+
+      - name: Setup ShigaTyper Environment
+        run: conda install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
+
+      - name: Environment Information
+        run: uname -a && env
+
+      - name: Test Usage and Version
+        run: |
+          python3 shigatyper/shigatyper.py --help
+          python3 shigatyper/shigatyper.py --version
+
+      - name: Test ShigaTyper with paired-end reads
+        run: |
+          fastq-dl SRX5006488 ENA --is_experiment --group_by_experiment
+          python3 shigatyper/shigatyper.py --R1 SRX5006488_R1.fastq.gz --R2 SRX5006488_R2.fastq.gz
+
+      - name: Test ShigaTyper with single-end reads
+        run: |
+          cat SRX5006488_R1.fastq.gz SRX5006488_R2.fastq.gz > SRX5006488SE.fastq.gz
+          python3 shigatyper/shigatyper.py --SE SRX5006488SE.fastq.gz
+
+      - name: Test ShigaTyper with ONT reads
+        run: |
+          fastq-dl SRX7050861 ENA --is_experiment --group_by_experiment
+          python3 shigatyper/shigatyper.py --SE SRX7050861.fastq.gz --ont
+
+      - name: Test ShigaTyper with non-Shigella reads
+        run: |
+          wget https://github.com/bactopia/bactopia-tests/raw/main/data/species/portiera/nanopore/ERR3772599.fastq.gz
+          python3 shigatyper/shigatyper.py --SE ERR3772599.fastq.gz --ont
