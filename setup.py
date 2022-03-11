@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='ShigaTyper',
-    version='2.0.0',
+    version='2.0.1',
     description='Shigella serotype prediction tool',
     long_description=open('README.md').read(),
     author='Yun Wu, Henry Lau, Theresa Lee, David Lau, Justin Payne',
