@@ -527,7 +527,7 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *arg
     log.critical(f"Complete in {readable(lapse)}.")
     timetrack.append(lapse.total_seconds())
 
-if __name__ == "__main__":
+def main():
     ShigellaRef = os.path.abspath(j(dirname(__file__), 'resources', 'ShigellaRef5.fasta'))
     if not os.path.isfile(ShigellaRef):
         print(f"Error: reference sequence not found at {ShigellaRef}.", file=sys.stderr)
@@ -610,3 +610,6 @@ if __name__ == "__main__":
     finally:
         pass
         shutil.rmtree(tempdir)
+
+if __name__ == "__main__":
+    main()
