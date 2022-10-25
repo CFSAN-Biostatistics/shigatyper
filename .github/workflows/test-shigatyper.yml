@@ -34,7 +34,7 @@ jobs:
       - name: Test Usage and Version
         run: |
           python3 -m shigatyper.shigatyper --help
-          python3-m shigatyper.shigatyper --version
+          python3 -m shigatyper.shigatyper --version
 
       - name: Test ShigaTyper with paired-end reads
         run: |
