@@ -20,7 +20,7 @@ Oxford Nanopore.
 ```{bash}
 usage: shigatyper.py [-h] [--R1 FASTA] [--R2 FASTA] [--SE FASTA] [--ont] [-n SAMPLE_NAME] [--verbose] [--version]
 
-ShigaTyper v. 2.0.0, 2022
+ShigaTyper v. 2.0.2, 2022
 
 options:
   -h, --help            show this help message and exit

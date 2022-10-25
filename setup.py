@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+from shigatyper import __version__
+
 from setuptools import setup
 
 setup(name='ShigaTyper',
-    version='2.0.1',
+    version=__version__,
     description='Shigella serotype prediction tool',
     long_description=open('README.md').read(),
     author='Yun Wu, Henry Lau, Theresa Lee, David Lau, Justin Payne',

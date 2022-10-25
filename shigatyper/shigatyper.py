@@ -15,8 +15,11 @@ options:
   --verbose, -v
   --version             show program's version number and exit
 """
-version = "2.0.0"
-usage = f"""ShigaTyper v. {version}, 2022
+
+from . import __version__
+version = __version__ # in case I didn't find every usage
+
+usage = f"""ShigaTyper v. {__version__}, 2022
 
 A WGS-based genoserotyping pipeline for Shigella spp.
 
@@ -87,7 +90,7 @@ def readable(tdelta):
 
 def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *args, **kwargs):
     # ## 3. Map Filtered reads to Reference sequence database (ShigellaRef5)
-    rlog.critical(f"ShigaTyper v{version}")
+    rlog.critical(f"ShigaTyper v{__version__}")
 
     rlog = rlog.getChild('run')
     
@@ -557,7 +560,7 @@ def main():
                         help="The input FASTQ file contains ONT reads")
     parse.add_argument('-n', '--name', dest='sample_name')
     parse.add_argument('--verbose', '-v', action='count', dest='log_v', default=0)
-    parse.add_argument('--version', action='version', version=f"ShigaTyper {version}")
+    parse.add_argument('--version', action='version', version=f"ShigaTyper {__version__}")
 
     if len(sys.argv) == 1:
         parse.print_help()
@@ -599,9 +602,9 @@ def main():
         tempdir = tempfile.mkdtemp()
         reads = []
         if is_paired:
-            run([args.R1, args.R2], tempdir=tempdir, ont=False)
+            run([args.R1, args.R2], tempdir=tempdir, ont=False, sample_name=args.sample_name)
         else:
-            run([args.SE], tempdir=tempdir, ont=args.ont)
+            run([args.SE], tempdir=tempdir, ont=args.ont, sample_name=args.sample_name)
     except CalledProcessError as e:
         rlog.error(e)
         if e.stderr:
