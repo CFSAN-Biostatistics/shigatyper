@@ -12,6 +12,8 @@ options:
   --SE FASTA            Input FASTQ is contains single-end reads
   --ont                 The input FASTQ file contains ONT reads
   -n SAMPLE_NAME, --name SAMPLE_NAME
+  -o OUTDIR, --name OUTDIR
+                        Where to write output files to
   --verbose, -v
   --version             show program's version number and exit
 """
