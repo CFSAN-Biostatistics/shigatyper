@@ -445,6 +445,8 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *arg
                     elif wzx == "Sf6_wzx":
                         prediction = "Shigella flexneri serotype 6"
                     elif wzx == "Sf_wzx":
+                        Hits.remove("Sf_wzx")
+                    else:
                         try: Hits.remove("Sf_wzy")
                         except: Hits = Hits
                         if len(Hits) == 0:
