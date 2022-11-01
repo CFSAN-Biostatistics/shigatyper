@@ -456,7 +456,7 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *arg
                                 "Shigella flexneri serotype 2b": ["gtrII", "gtrX"], "Shigella flexneri serotype 3a":
                                 ["gtrX","Oac"], "Shigella flexneri serotype 3b": (['Oac'], ['Oac1b']), "Shigella flexneri serotype 4a": 
                                 ["gtrIV"], "Shigella flexneri serotype 4av": ["gtrIV", "Xv"], "Shigella flexneri serotype 4b":
-                                (['gtrIV', 'Oac'], ['gtrIV', 'Oac1b'y]), 'Shigella flexneri 4bv': ['gtrIV', 'Oac', 'Xv'],
+                                (['gtrIV', 'Oac'], ['gtrIV', 'Oac1b']), 'Shigella flexneri 4bv': ['gtrIV', 'Oac', 'Xv'],
                                 "Shigella flexneri serotype 5a": (["gtrV", "Oac"], ['gtrV']),
                                     "Shigella flexneri serotype 5b": (["gtrV", "gtrX", "Oac"], ['gtrV', 'gtrX']),
                                     "Shigella flexneri serotype X": ["gtrX"], "Shigella flexneri serotype Xv (4c)":
