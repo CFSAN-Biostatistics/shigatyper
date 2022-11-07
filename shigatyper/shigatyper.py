@@ -12,6 +12,8 @@ options:
   --SE FASTA            Input FASTQ is contains single-end reads
   --ont                 The input FASTQ file contains ONT reads
   -n SAMPLE_NAME, --name SAMPLE_NAME
+  -o OUTDIR, --name OUTDIR
+                        Where to write output files to
   --verbose, -v
   --version             show program's version number and exit
 """
@@ -88,7 +90,7 @@ def readable(tdelta):
     else:
         return f"{tdelta.seconds // 3600} hours, {tdelta.seconds // 60 : 01} seconds"
 
-def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *args, **kwargs):
+def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, outdir='./', *args, **kwargs):
     # ## 3. Map Filtered reads to Reference sequence database (ShigellaRef5)
     rlog.critical(f"ShigaTyper v{__version__}")
 
@@ -511,7 +513,7 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *arg
     if checkpoint == 1:
         pass
     else:
-        output = f"{sample_name}-hits.tsv"
+        output = f"{outdir}/{sample_name}-hits.tsv"
         log.critical(f"Writing hits to {output}")
         if "ipaH_c" in Maphits.Hit.tolist():
             List2.to_csv(output, sep="\t")
@@ -520,9 +522,9 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, *arg
             Maphits.to_csv(output, sep="\t")
             Maphits.to_csv(sys.stdout, sep="\t")
 
-    serotype_output = f"{sample_name}.tsv"
+    serotype_output = f"{outdir}/{sample_name}.tsv"
     log.critical(f"Writing final serotype prediction to {serotype_output}")
-    with open(f"{sample_name}.tsv", "wt") as fh_out:
+    with open(serotype_output, "wt") as fh_out:
         ipab = ('-','+')[bool(ipaB)]
         results = f"sample\tprediction\tipaB\tnotes\n{sample_name}\t{prediction}\t{ipab}\t{note}"
         print(results)
@@ -561,6 +563,7 @@ def main():
     parse.add_argument('--ont', action="store_true",
                         help="The input FASTQ file contains ONT reads")
     parse.add_argument('-n', '--name', dest='sample_name')
+    parse.add_argument('-o', '--outdir', help='Where to write output files to', default="./")
     parse.add_argument('--verbose', '-v', action='count', dest='log_v', default=0)
     parse.add_argument('--version', action='version', version=f"ShigaTyper {__version__}")
 
@@ -604,9 +607,9 @@ def main():
         tempdir = tempfile.mkdtemp()
         reads = []
         if is_paired:
-            run([args.R1, args.R2], tempdir=tempdir, ont=False, sample_name=args.sample_name)
+            run([args.R1, args.R2], tempdir=tempdir, ont=False, sample_name=args.sample_name, outdir=args.outdir)
         else:
-            run([args.SE], tempdir=tempdir, ont=args.ont, sample_name=args.sample_name)
+            run([args.SE], tempdir=tempdir, ont=args.ont, sample_name=args.sample_name, outdir=args.outdir)
     except CalledProcessError as e:
         rlog.error(e)
         if e.stderr:
