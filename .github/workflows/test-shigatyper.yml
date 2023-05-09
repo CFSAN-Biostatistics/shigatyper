@@ -19,14 +19,17 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: Setup miniconda
+      - name: Setup mamba
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: shigatyper
           auto-activate-base: false
+          mamba-version: "*"
+          channels: conda-forge,bioconda,defaults
+          channel-priority: true
 
       - name: Setup ShigaTyper Environment
-        run: conda install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
+        run: mamba install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
 
       - name: Environment Information
         run: uname -a && env
