@@ -60,3 +60,10 @@ jobs:
         run: |
           cat SRX5006488_R1.fastq.gz SRX5006488_R2.fastq.gz > SRX5006488SE.fastq.gz
           python3 -m shigatyper.shigatyper --SE SRX5006488SE.fastq.gz -n SRX5006488
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040641
+      - name: Test ShigaTyper with a Shigella flexneri serotype 4a
+        run: |
+          fastq-dl SRR8186703 ENA 
+          cat SRX5006488_R1.fastq.gz SRX5006488_R2.fastq.gz > SRX5006488SE.fastq.gz
+          python3 -m shigatyper.shigatyper --R1 SRX5006488SE.fastq.gz -n SRX5006488
