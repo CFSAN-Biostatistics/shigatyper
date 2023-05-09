@@ -29,8 +29,8 @@ jobs:
           channel-priority: true
           environment-file: environment.yaml
 
-      #- name: Setup ShigaTyper Environment
-      #  run: mamba install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
+      - name: add fastq-dl to existing env
+        run: mamba install -y -c conda-forge -c bioconda fastq-dl
 
       - name: Environment Information
         run: uname -a && env
