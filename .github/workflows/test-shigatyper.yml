@@ -27,9 +27,10 @@ jobs:
           mamba-version: "*"
           channels: conda-forge,bioconda,defaults
           channel-priority: true
+          environment-file: environment.yaml
 
-      - name: Setup ShigaTyper Environment
-        run: mamba install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
+      #- name: Setup ShigaTyper Environment
+      #  run: mamba install -y -c conda-forge -c bioconda bcftools fastq-dl minimap2 pandas pysam samtools
 
       - name: Environment Information
         run: uname -a && env
@@ -67,5 +68,5 @@ jobs:
       # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040641
       - name: Test ShigaTyper with a Shigella flexneri serotype 4a
         run: |
-          fastq-dl SRR8186703 
+          fastq-dl -a SRR8186703 
           python3 -m shigatyper.shigatyper --R1 SRR8186703_1.fastq.gz --R2 SRR8186703_2.fastq.gz -n SRX5006488
