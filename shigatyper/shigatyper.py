@@ -447,9 +447,9 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, outd
                     elif wzx == "Sf6_wzx":
                         prediction = "Shigella flexneri serotype 6"
                     elif wzx == "Sf_wzx":
-                        Hits.remove("Sf_wzx")
-                    else:
                         try: Hits.remove("Sf_wzy")
+                        except: Hits = Hits
+                        try: Hits.remove("Sf_wzx")
                         except: Hits = Hits
                         if len(Hits) == 0:
                             prediction = "Shigella flexneri serotype Y"
@@ -474,6 +474,8 @@ def run(reads, tempdir, sample_name='', threshold=50, rlog=rlog, ont=False, outd
                                     prediction = Serotype; predict += 1
                             if predict == 0:
                                 prediction = "Shigella flexneri, novel serotype"
+                    else:
+                        prediction = "Unable to determine a serotype based on gene hits"
         lapse = datetime.datetime.now() - start
         log.info(f"Complete in {readable(lapse)}.")
         timetrack.append(lapse.total_seconds())
