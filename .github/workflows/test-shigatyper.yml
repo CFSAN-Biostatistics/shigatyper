@@ -41,7 +41,7 @@ jobs:
 
       - name: Test ShigaTyper with paired-end reads
         run: |
-          fastq-dl -a SRX5006488 ENA --group-by-experiment
+          fastq-dl -a SRX5006488 --group-by-experiment
           python3 -m shigatyper.shigatyper --R1 SRX5006488_R1.fastq.gz --R2 SRX5006488_R2.fastq.gz
 
       - name: Test ShigaTyper with single-end reads
@@ -51,7 +51,7 @@ jobs:
 
       - name: Test ShigaTyper with ONT reads
         run: |
-          fastq-dl -a SRX7050861 ENA --group-by-experiment
+          fastq-dl -a SRX7050861 --group-by-experiment
           python3 -m shigatyper.shigatyper --SE SRX7050861.fastq.gz --ont
 
       - name: Test ShigaTyper with non-Shigella reads
@@ -67,5 +67,5 @@ jobs:
       # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040641
       - name: Test ShigaTyper with a Shigella flexneri serotype 4a
         run: |
-          fastq-dl SRR8186703 ENA 
+          fastq-dl SRR8186703 
           python3 -m shigatyper.shigatyper --R1 SRR8186703_1.fastq.gz --R2 SRR8186703_2.fastq.gz -n SRX5006488
