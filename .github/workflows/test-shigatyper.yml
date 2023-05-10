@@ -75,9 +75,9 @@ jobs:
       # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040580
       - name: Test ShigaTyper with a Shigella flexneri serotype 1b
         run: |
-          fastq-dl -a SRR8186703 
-          python3 -m shigatyper.shigatyper --R1 SRR8186703_1.fastq.gz --R2 SRR8186703_2.fastq.gz -n SRR8186703
-          grep 'serotype 1b' SRR8186703.tsv
+          fastq-dl -a SRR8186627 
+          python3 -m shigatyper.shigatyper --R1 SRR8186627_1.fastq.gz --R2 SRR8186627_2.fastq.gz -n SRR8186627
+          grep 'serotype 1b' SRR8186627.tsv
 
       # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040584
       - name: Test ShigaTyper with a Shigella flexneri serotype 2a
@@ -120,3 +120,17 @@ jobs:
           fastq-dl -a SRR1811686 
           python3 -m shigatyper.shigatyper --R1 SRR1811686_1.fastq.gz --R2 SRR1811686_2.fastq.gz -n SRR1811686
           grep 'serotype 5a' SRR1811686.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040648
+      - name: Test ShigaTyper with a Shigella flexneri serotype 6
+        run: |
+          fastq-dl -a SRR8186591 
+          python3 -m shigatyper.shigatyper --R1 SRR8186591_1.fastq.gz --R2 SRR8186591_2.fastq.gz -n SRR8186591
+          grep 'serotype 6' SRR8186591.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10052844
+      - name: Test ShigaTyper with a Shigella flexneri serotype 7b
+        run: |
+          fastq-dl -a SRR8186647
+          python3 -m shigatyper.shigatyper --R1 SRR8186647_1.fastq.gz --R2 SRR8186647_2.fastq.gz -n SRR8186647
+          grep 'serotype 7b' SRR8186647.tsv
