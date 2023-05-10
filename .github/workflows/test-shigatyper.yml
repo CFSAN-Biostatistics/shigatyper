@@ -29,8 +29,8 @@ jobs:
           channel-priority: true
           environment-file: environment.yaml
 
-      - name: add fastq-dl to existing env
-        run: mamba install -y -c conda-forge -c bioconda fastq-dl
+      - name: add fastq-dl to existing mamba env
+        run: mamba install -y -c conda-forge -c bioconda 'fastq-dl>=2.0.1'
 
       - name: Environment Information
         run: uname -a && env
@@ -65,8 +65,58 @@ jobs:
           cat SRX5006488_R1.fastq.gz SRX5006488_R2.fastq.gz > SRX5006488SE.fastq.gz
           python3 -m shigatyper.shigatyper --SE SRX5006488SE.fastq.gz -n SRX5006488
 
-      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040641
-      - name: Test ShigaTyper with a Shigella flexneri serotype 4a
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10052838
+      - name: Test ShigaTyper with a Shigella flexneri serotype 1a
+        run: |
+          fastq-dl -a SRR8186648 
+          python3 -m shigatyper.shigatyper --R1 SRR8186648_1.fastq.gz --R2 SRR8186648_2.fastq.gz -n SRR8186648
+          grep 'serotype 1a' SRR8186648.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040580
+      - name: Test ShigaTyper with a Shigella flexneri serotype 1b
         run: |
           fastq-dl -a SRR8186703 
-          python3 -m shigatyper.shigatyper --R1 SRR8186703_1.fastq.gz --R2 SRR8186703_2.fastq.gz -n SRX5006488
+          python3 -m shigatyper.shigatyper --R1 SRR8186703_1.fastq.gz --R2 SRR8186703_2.fastq.gz -n SRR8186703
+          grep 'serotype 1b' SRR8186703.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040584
+      - name: Test ShigaTyper with a Shigella flexneri serotype 2a
+        run: |
+          fastq-dl -a SRR8186705 
+          python3 -m shigatyper.shigatyper --R1 SRR8186705_1.fastq.gz --R2 SRR8186705_2.fastq.gz -n SRR8186705
+          grep 'serotype 2a' SRR8186705.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040583
+      - name: Test ShigaTyper with a Shigella flexneri serotype 2b
+        run: |
+          fastq-dl -a SRR8186704 
+          python3 -m shigatyper.shigatyper --R1 SRR8186704_1.fastq.gz --R2 SRR8186704_2.fastq.gz -n SRR8186704
+          grep 'serotype 2b' SRR8186704.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10052840
+      - name: Test ShigaTyper with a Shigella flexneri serotype 3a
+        run: |
+          fastq-dl -a SRR8186651 
+          python3 -m shigatyper.shigatyper --R1 SRR8186651_1.fastq.gz --R2 SRR8186651_2.fastq.gz -n SRR8186651
+          grep 'serotype 3a' SRR8186651.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040645
+      - name: Test ShigaTyper with a Shigella flexneri serotype 3b
+        run: |
+          fastq-dl -a SRR8186727 
+          python3 -m shigatyper.shigatyper --R1 SRR8186727_1.fastq.gz --R2 SRR8186727_2.fastq.gz -n SRR8186727
+          grep 'serotype 3b' SRR8186727.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/?term=SAMN10040641
+      - name: Test ShigaTyper with a Shigella flexneri serotype Xv (4c)
+        run: |
+          fastq-dl -a SRR8186631 
+          python3 -m shigatyper.shigatyper --R1 SRR8186631_1.fastq.gz --R2 SRR8186631_2.fastq.gz -n SRR8186631
+          grep 'serotype Xv (4c)' SRR8186631.tsv
+
+      # BioSample: https://www.ncbi.nlm.nih.gov/biosample/SAMN03291463
+      - name: Test ShigaTyper with a Shigella flexneri serotype 5a
+        run: |
+          fastq-dl -a SRR1811686 
+          python3 -m shigatyper.shigatyper --R1 SRR1811686_1.fastq.gz --R2 SRR1811686_2.fastq.gz -n SRR1811686
+          grep 'serotype 5a' SRR1811686.tsv
